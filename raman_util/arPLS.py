@@ -33,7 +33,7 @@ def arPLS(
 
         Return
         ----------
-        z(corrected baseline)
+        corrected
     """
     L = len(Data)
     if(guess_baseline_order is not None):
@@ -44,27 +44,26 @@ def arPLS(
     H = lam * D.dot(D.T)  # The transposes are flipped w.r.t the Algorithm on pg. 252
     w = np.ones(L)
     W = sparse.spdiags(w, 0, L, L)
-    crit = 1
+    criteria = 1
     count = 0
     plt.plot(Data,color="black",label="Target")
 
-    while crit > ratio:
-        z = linalg.spsolve(W + H, W * Data)
-        d = Data - z
+    while criteria > ratio:
+        estimate_baseline = linalg.spsolve(W + H, W * Data)
+        d = Data - estimate_baseline
         dn = d[d < 0]
         m = np.mean(dn)
         s = np.std(dn)
 
-        #tes>1000,np.exp(tes)=inf
-        tes = 2 * (d - (2*s - m))/s        
+        #2 * (d - (2*s - m))/s  > 1000,np.exp(tes)=inf
         ex = np.exp(2 * (d - (2*s - m))/s)        
         w_new = 1 / (1 + ex)
     
-        crit = norm(w_new - w) / norm(w)
+        criteria = norm(w_new - w) / norm(w)
         w = w_new
         W.setdiag(w)  # Do not create a new matrix, just update diagonal values
         count += 1
-        plt.plot(z, "black", linewidth=1, linestyle="dashed",alpha=0.3)
+        plt.plot(estimate_baseline, "black", linewidth=1, linestyle="dashed",alpha=0.3)
 
         if count > loop_max:
             print('Maximum number of iterations exceeded.')
@@ -72,18 +71,18 @@ def arPLS(
     
     if show_process:
         plt.title(f"arPLS $\lambda$={lam:.2f}")
-        plt.plot(z,"black", linewidth=1, linestyle="dashed",label="Estimated Baseline")
-        plt.plot(Data-z,color="blue",label="Corrected")
+        plt.plot(estimate_baseline,"black", linewidth=1, linestyle="dashed",label="Estimated Baseline")
+        plt.plot(Data-estimate_baseline,color="blue",label="Corrected")
         plt.legend()
         plt.show()
     plt.clf()
     plt.close()
 
     if full_output:
-        info = {'num_iter': count, 'stop_criterion': crit,'lambda:':lam}
-        return z, d, info
+        info = {'num_iter': count, 'stop_criteria': criteria,'lambda:':lam}
+        return  d,estimate_baseline,info
     else:
-        return z
+        return d
 
 #Asymetrically reweighted penalized least squares[2019]
 #https://www.koreascience.or.kr/article/JAKO201913458198163.pdf

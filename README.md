@@ -12,6 +12,7 @@
    - [読み込み](#読み込み)
    - [バックグラウンドスペクトル除去](#バックグラウンドスペクトル除去)(用意中..)
    - [ベースライン処理](#ベースライン処理)
+   - [その他](#その他)
 - [利用方法](#利用方法)
 - [Reference](#reference)
 
@@ -19,47 +20,42 @@
 # 機能
 
 ## 読み込み
-| 関数名 | 機能 | 補足 | 
-| - |- | - | 
-| loadascs | 指定フォルダ内のascファイルの一括読み込み+サンプル/バックグラウンド/不明データの分類 | 「\* quartz\* .asc」,「\* water\* .asc」，「\* _(数字).asc」の3種類で分割 | 
+| 関数名 | 機能 | 引数 | 戻り値 |補足 | 
+| - | - | - | - | - |
+| load_ascs.load_ascs | 指定フォルダ内のascファイルの一括読み込み+サンプル/バックグラウンド/不明データの分類 | dirname:str=None,filepath:str=None,noreturn_unknown_data :bool=True,sep="\t" | cell_df,background_df,(unknown_df) |「\* quartz\* .asc」,「\* water\* .asc」，「\* _(数字).asc」の3種類で分割 | 
+
+
 
 ## バックグラウンドスペクトル除去
 | 関数名 | 機能 | 補足 | 
 | - |- | - | 
 
+
+
 ## ベースライン処理
-| 関数名 | 機能 | 補足 | 
-| - |- | - | 
-| pureASL  | ASL法[^1],[^2]によるベースライン補正|| 
-| arPLS    | arPLS法[^1],[^2]によるベースライン補正|最適化オプション[^3]を利用する場合,形状から推定されるベースラインの次数をguess_baseline_orderに渡す| 
+| 関数名 | 機能 | 引数 | 戻り値 |補足 | 
+| - | - | - | - | - |
+| pureASL.pureASL| ASL法[^1],[^2]によるベースライン補正|Data:list,lam:int=10**3.5,p:float =0.00005,repeat_max:int=10,show_process    :bool=False|corrected_baseline| 
+| arPLS.arPLS    | arPLS法[^1],[^2]によるベースライン補正|Data:list,lam:int=1e4,ratio:float=1e-6,loop_max:int=10, show_process:bool=False,full_output:bool=False,guess_baseline_order:int=None|corrected_baseline,(estimate_baseline,info)|最適化オプション[^3]を利用する場合,形状から推定されるベースラインの次数をguess_baseline_orderに渡す| 
+
+
+
+## その他
+| 関数名 | 機能 | 引数 | 戻り値 |補足 | 
+| - | - | - | - | - |
+|sample_spectra.n_peaks_spectra| n頂点のピークがランダムな場所にあるデータを生成|x,n=3,seed=0|spectra|
+|sample_spectra.polynomial_baseline| degree多項式の曲線を生成|x,degree=3|generated_baseline|degreeに応じて形状は固定|
+
+
 
 
 # 利用方法
-1. 利用したい.pyファイル(main.py)と同じディレクトリ内にraman_utilフォルダを設置
+sample.pyをご覧ください．
 
-```
-.
-├──  sample.py
-└─── raman_util
-   └── (省略)
-```
-
-2. main.pyにて必要なモジュールをimport,実行
-
-```python:sample.py
-#from raman_util import *
-#from raman_util import loadascs,pureASL
-
-from raman_util.arPLS import arPLS
-from raman_util.sample_spectra import n_peaks_spectra,polynomial_baseline
-
-#generate simulated data
-x = np.arange(0,1000)
-y = n_peaks_spectra(x,n=3,seed=0) + polynomial_baseline(x,degree=3)
-
-#correct and show process
-correct = arPLS(y,show_process=True,guess_baseline_order=3)
-```
+基本的にはraman_utilと同じ階層にmain.pyを設置して，使用するものをimportしてください．
+* from raman_util.pureASL import pureASL
+* from raman_util.sample_spectra import n_peaks_spectra,polynomial_baseline
+* from raman_util.arPLS import arPLS
 
 # Reference
 [^1]: [Python baseline correction library(stack over flow)](https://stackoverflow.com/questions/29156532/python-baseline-correction-library?answertab=createdasc#tab-top)  

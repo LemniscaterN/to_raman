@@ -1,7 +1,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import CubicSpline
 
 def n_peaks_spectra(
         x,
