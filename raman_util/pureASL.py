@@ -8,7 +8,7 @@ from scipy.sparse import spdiags
 import scipy.sparse.linalg as spla
 import pandas as pd
 
-#Maybe 
+#Maybe this code is original.
 #https://stackoverflow.com/questions/29156532/python-baseline-correction-library
 def pureASL(
         Data            :list,
@@ -26,7 +26,7 @@ def pureASL(
     L = len(Data)
     D = csc_matrix(np.diff(np.eye(L), 2))
     w = np.ones(L)
-    plt.plot(Data,color="black",label="Original")
+    plt.plot(Data,color="black",label="Targets")
 
     y = 0
     corrected = pd.DataFrame(index=range(len(Data)))
@@ -39,19 +39,18 @@ def pureASL(
         plt.plot(y, "black", linewidth=1, linestyle="dashed",alpha=0.3)
 
     if show_process:
-        plt.title("pureASL")
+        plt.title(f"pureASL λ={lam:.2f},p={p}")
         plt.plot(y, "black", linewidth=1, linestyle="dashed",label="Estimated Baseline")
         plt.plot(corrected.loc[:, repeat_max],color="blue",label="Corrected")
         plt.legend()
         plt.show()
-    plt.close("all")
+    plt.clf()
+    plt.close()
     return corrected.loc[:, repeat_max]
 
 
 if __name__ == "__main__":
-    import sample_spectra
+    from sample_spectra import n_peaks_spectra,polynomial_baseline
     x = np.arange(1, 1001)
-    y = sample_spectra.sample_spectra(x) +     sample_spectra.base_line(x)
-    plt.plot(y)
-    plt.show()
-    y2 = pureASL(y,show_process=True)
+    y = n_peaks_spectra(x,seed=1) + polynomial_baseline(x)
+    corrected = pureASL(y,show_process=True)

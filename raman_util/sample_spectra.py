@@ -29,12 +29,12 @@ def polynomial_baseline(x,degree=3):
         Generate degree baseline
     """
     y = 100*np.cos(x/(len(x)/(3*np.pi)))
-    plt.plot(y)
-    plt.show()
+    # plt.plot(y)
+    # plt.show()
     coef=np.polynomial.Polynomial.fit(x, y, deg=degree)
     return coef(x)
     
-    
+
 if __name__ == "__main__":
     x = np.arange(1, 3001)
     for i in range(3):

@@ -1,1 +1,1 @@
-__all__ = ["pureASL","arPLS","loadascs"]
+__all__ = ["pureASL","arPLS","load_ascs"]

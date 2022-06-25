@@ -1,3 +1,5 @@
+
+
 from scipy import sparse
 from scipy.sparse import linalg
 import numpy as np
@@ -21,16 +23,20 @@ def arPLS(
     ):
     """
         arPLS(2014)
+
         Parameters
         ----------
         Data            
         lam                   : Smoothing and fitting balancing parameters.
         ratio,loop_max        : Exit condition. 
-        guess_base_line_order : To use optimized lambda. See your data , and gusess baseline order.
+        guess_baseline_order : To use optimized lambda. See your data , and gusess baseline order.
+
+        Return
+        ----------
+        z(corrected baseline)
     """
     L = len(Data)
     if(guess_baseline_order is not None):
-        print("guess")
         lam = _lambda_optimizer(L,guess_baseline_order)
 
     diag = np.ones(L - 2)
@@ -40,7 +46,7 @@ def arPLS(
     W = sparse.spdiags(w, 0, L, L)
     crit = 1
     count = 0
-    plt.plot(Data,color="black",label="Original")
+    plt.plot(Data,color="black",label="Target")
 
     while crit > ratio:
         z = linalg.spsolve(W + H, W * Data)
@@ -67,10 +73,11 @@ def arPLS(
     if show_process:
         plt.title(f"arPLS $\lambda$={lam:.2f}")
         plt.plot(z,"black", linewidth=1, linestyle="dashed",label="Estimated Baseline")
-        plt.plot(d,color="blue",label="Corrected")
+        plt.plot(Data-z,color="blue",label="Corrected")
         plt.legend()
         plt.show()
-    plt.close("all")
+    plt.clf()
+    plt.close()
 
     if full_output:
         info = {'num_iter': count, 'stop_criterion': crit,'lambda:':lam}
@@ -89,6 +96,6 @@ def _lambda_optimizer(input_length,baseline_order_from_shape):
 if __name__ == "__main__":
     import sample_spectra
     x = np.arange(1, 1001)
-    y = sample_spectra.sample_spectra(x) +     sample_spectra.base_line(x)
-    #y2 = arPLS(y,show_process=True,guess_baseline_order=3)
-    y2 = arPLS(y,show_process=True,lam=1e4)
+    y = sample_spectra.n_peaks_spectra(x,n=3) + sample_spectra.polynomial_baseline(x,degree=3)
+    corrected = arPLS(y,show_process=True,guess_baseline_order=3)
+    #corrected = arPLS(y,show_process=True,lam=1e4)
