@@ -3,8 +3,6 @@
     * n_peaks_spectra
     * polynomial_baseline
 """
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import CubicSpline

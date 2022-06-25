@@ -103,13 +103,6 @@ def _lambda_optimizer_to_arPLS(input_length,baseline_order_from_shape):
     lam = 10**(np.log2(N)-0.5*t-3.5)
     return lam
 
-if __name__ == "__main__":
-    import sample_spectra
-    x = np.arange(1, 1001)
-    y = sample_spectra.n_peaks_spectra(x,n=3) + sample_spectra.polynomial_baseline(x,degree=3)
-    corrected = arPLS(y,show_process=True,guess_baseline_order=3)
-    #corrected = arPLS(y,show_process=True,lam=1e4)
-
 #Maybe this code is original.
 #https://stackoverflow.com/questions/29156532/python-baseline-correction-library
 def pureASL(
@@ -151,33 +144,34 @@ def pureASL(
     return corrected.loc[:, repeat_max]
 
 
-def rolling_ball(Data, BC_Repeat_or_Radius, Show_Picture_of_pathway):
-    ramanshift_cut = [float(r.split("_")[1]) for r in Data.index]
-    
-    rb_data = rb(Data, radius=BC_Repeat_or_Radius)
-    
-    plt.figure(figsize=(15, 8))
-    
-    #TODO 目盛線を引くために追加したコード
-    plt.minorticks_on()
-    plt.grid(which = "both", axis="x", color = "gray", linestyle="--")
-    
-    plt.plot(ramanshift_cut, Data, linewidth=2)
-    plt.plot(ramanshift_cut, rb_data, "b", linewidth=1, linestyle="dashed")
-    
-    
-    if Show_Picture_of_pathway:
+def rolling_ball(
+        Data        :list,
+        radius      :int,
+        show_process:bool=False
+    ):
+    """
+        Rolling_ball(kimage.restoration)
+        In practice, radius need to be optimized.
+    """ 
+    estimated_background = rb(Data, radius=radius)    
+    if show_process:
+        plt.plot(Data,color="black",label="Targets")
+        plt.plot(estimated_background, "black", linewidth=1, linestyle="dashed",label="Estimated Baseline")
+        plt.plot(Data-estimated_background,color="blue",label="Corrected")
+        plt.title(f"Rolling_ball radius={radius}")
+        plt.legend()
         plt.show()
-    plt.close("all")
-
-    return Data - rb_data
+        plt.clf()
+        plt.close()
+    return Data - estimated_background
 
 if __name__ == "__main__":
     import sample_spectra
     from sample_spectra import n_peaks_spectra,polynomial_baseline
     x = np.arange(1, 1001)
-    y = sample_spectra.n_peaks_spectra(x,n=3) + sample_spectra.polynomial_baseline(x,degree=3)
-
+    y = sample_spectra.n_peaks_spectra(x,n=3) + sample_spectra.polynomial_baseline(x,degree=4,seed=1)
     corrected = arPLS(y,show_process=True,guess_baseline_order=3)
     corrected = arPLS(y,show_process=True,lam=1e4) 
     corrected = pureASL(y,show_process=True)
+    for radius in np.arange(1,30,6):
+        corrected = rolling_ball(y,radius,show_process=True)

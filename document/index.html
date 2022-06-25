@@ -16,7 +16,7 @@
         </tr>
         <tr>
             <th>load_ascs</th>
-            <th>dirname内のascファイルかfilepathのascからCell,Background,Unknwonに分類してDataFrameを返却.,Unknwonの返却は任意</th>
+            <th>dirname内のascファイルかfilepathのascからCell,Background,Unknownに分類してDataFrameを返却.,Unknownの返却は任意</th>
             <th>dirname:str=None,filepath:str=None,noreturn_unknown_data:bool=True,sep="\t"</th>
             <th>cell_df,background_df,unknown_df</th>
             <th>「\* quartz\* .asc」,「\* water\* .asc」,「\* _(数字).asc」の3種類で分類</th>
@@ -44,7 +44,7 @@
         </tr>
         <tr>
             <th>pureASL</th>
-            <th><a href="https://pubs.rsc.org/en/content/articlehtml/2015/an/c4an01061b">ASL</a>による補正.λとpを最適化する必要がある</th>
+            <th>ASLによる補正.(手法の詳細はarPLSの論文に記載アリ)λとpを最適化する必要がある</th>
             <th>Data:list,lam:int=10**3.5,p:float =0.00005,repeat_max:int=10,show_process:bool=False</th>
             <th>補正された入力データ</th>
             <th>
@@ -55,7 +55,8 @@
         </tr>
         <tr>
             <th>arPLS</th>
-            <th><a href="https://pubs.rsc.org/en/content/articlehtml/2015/an/c4an01061b">arPLS</a>による補正.λを最適化する必要があり，概形から読み取ったベースラインの次数を渡すことで，<a href="https://www.koreascience.or.kr/article/JAKO201913458198163.pdf">論文</a>で紹介されているλの最適選択を適用</th>
+            <th>arPLS(論文:<a href="https://pubs.rsc.org/en/content/articlehtml/2015/an/c4an01061b">Baseline correction using asymmetrically reweighted penalized least squares smoothing,2014</a>)
+                による補正.λを最適化する必要があり，概形から読み取ったベースラインの次数を渡すことで，論文(<a href="https://www.koreascience.or.kr/article/JAKO201913458198163.pdf">Asymetrically reweighted penalized least squares에서 최적의평활화 매개변수를 위한 결정함수,2019</a>)で紹介されているλの最適選択を適用</th>
             <th>Data:list,lam:int=1e4,ratio:float=1e-6,loop_max:int=10, show_process:bool=False,full_output:bool=False,guess_baseline_order:int=None</th>
             <th>補正された入力データ,(推定されたベースライン,補正に関する情報)</th>
             <th>
@@ -63,6 +64,13 @@
                     Stackoverflow
                 </a>による実装
             </th>
+        </tr>
+        <tr>
+            <th>rolling_ball</th>
+            <th>RollingBallによる補正.スペクトルの線の下に設定した径のボールを転がし，ボールの軌道に当たる高さを削除．スパイクノイズを除去する画像処理のアルゴリズム．</th>
+            <th>Data:list,radius:int,show_process:bool=False</th>
+            <th>補正された入力データ</th>
+            <th><a href="ttps://scikit-image.org/docs/stable/api/skimage.restoration.html#skimage.restoration.rolling_ball">skimage.restoration.rolling_ball</a>を利用．</th>
         </tr>
     </table>
 
