@@ -8,6 +8,7 @@
 それぞれの公開できる範囲で構いません．お気軽にご相談ください．GitHubの練習を兼ねてのプルリクも大歓迎です．
 
 # 目次
+説明は概要のみとなります．関数の仕様や説明などは[ドキュメント](https://lemniscatern.github.io/toraman/document/)をご覧ください．
 - [機能](#機能)
    - [読み込み](#読み込み)
    - [バックグラウンドスペクトル除去](#バックグラウンドスペクトル除去)
@@ -18,7 +19,6 @@
 
 
 # 機能
-概要のみ．仕様などの詳細は[こちら](https://lemniscatern.github.io/toraman/document/).
 
 ## 読み込み
    load.~
@@ -31,6 +31,7 @@
    correct_baseline.~
    * pureASL : ASL[^1]による除去[^2].
    * arPLS : arPLS[^1]による除去[^2].
+   * rolling_ball : ローリングボールによる除去
 
 ## その他
    sample_spectra.*
@@ -39,11 +40,12 @@
 
 # 利用方法
 sample.pyをご覧ください．
-
 基本的にはraman_utilと同じ階層にmain.pyを設置して，使用するものをimportしてください．
-* from raman_util.pureASL import pureASL
-* from raman_util.sample_spectra import n_peaks_spectra,polynomial_baseline
-* from raman_util.arPLS import arPLS
+
+```
+from raman_util.correct_baseline import arPLS
+```
+
 
 # Reference
  
