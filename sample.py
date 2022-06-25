@@ -1,21 +1,21 @@
 import numpy as np
-from raman_util import sample_spectra
-from raman_util.pureASL import pureASL
-from raman_util.sample_spectra import n_peaks_spectra,polynomial_baseline
-from raman_util.arPLS import arPLS
+#import sample-1
+#from raman_util.correct_baseline import *
+#pureASL
 
-#If you import module like this,
-#from raman_util import *
+#import sample-2
+# from raman_util import *
+# correct_baseline.arPLS()
 
-#You can use like those.(Caution:Both of module and function are same name.)
-#pureASL.pureASL()
-#sample_spectra.n_peaks_spectra()
-#pureASL.pureASL()
+#import sample-3
+# import raman_util.load
+# raman_util.load.load_ascs()
+
 
 if __name__ == "__main__":
-    
-
     #generate simulated data
+    from raman_util.sample_spectra import *
+    from raman_util.correct_baseline import arPLS
     x = np.arange(0,1000)
     y = n_peaks_spectra(x,n=3,seed=0) + polynomial_baseline(x,degree=3)
     #correct and show process

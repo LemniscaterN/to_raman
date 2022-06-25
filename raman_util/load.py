@@ -1,5 +1,9 @@
+"""
+    To read asc file and create DataFrame
+    * load_ascs
+"""
+
 import pandas as pd
-import numpy as np
 import os.path
 
 def load_ascs(
@@ -52,6 +56,8 @@ def _load_ascs_from_dict(files:dict,sep="\t"):
     is_first_loop= True
 
     for parent_dir , basenames in files.items():
+        if(len(basenames)):
+            continue
         cell_df     = pd.DataFrame()
         background_df  = pd.DataFrame()
         unknown_df  = pd.DataFrame()
@@ -74,7 +80,10 @@ def _load_ascs_from_dict(files:dict,sep="\t"):
                 unknown_df[cell_name]    = cell_data
                 unknown_df.index         = raman_shift
                             
-        
+        if(cell_df.empty):
+            print(f"No asc files. In {os.path.join(parent_dir)}.")
+            exit(-1)
+
         cell_df.index = raman_shift
         background_df.index = raman_shift
 

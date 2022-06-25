@@ -1,11 +1,19 @@
+"""
+    To generate simulation spectra.
+    * n_peaks_spectra
+    * polynomial_baseline
+"""
+
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import CubicSpline
+
 
 def n_peaks_spectra(
-        x,
-        n=3,
-        seed=0,
+        x:list,
+        n:int=3,
+        seed:int=0,
     ):
     """
         Generate n-peaks data
@@ -23,25 +31,41 @@ def n_peaks_spectra(
     return spectra
 
 
-def polynomial_baseline(x,degree=3):
+def polynomial_baseline(
+        x:list,
+        degree:int=3,
+        seed:int=0,
+    ):
     """
         Generate degree baseline
     """
-    y = 100*np.cos(x/(len(x)/(3*np.pi)))
-    # plt.plot(y)
+    np.random.seed(seed)
+    L = len(x)
+    y=np.zeros(L)
+    #generate random wave , and polyminal degree.
+    for i in range(10):
+        xi = x + np.random.randint(0,L/2)
+        coef = np.random.random_sample()
+        period = 2*np.pi*np.random.randint(1,8)#wave cnt in xrange
+        y1 = 1000*coef*np.sin(period/(len(x))*(xi))
+        y+=y1
+    coef=np.polynomial.Polynomial.fit(x,y, deg=degree)
+    # plt.plot(coef(x),label=f"coef:{degree}")
+    # plt.legend()
     # plt.show()
-    coef=np.polynomial.Polynomial.fit(x, y, deg=degree)
     return coef(x)
     
 
 if __name__ == "__main__":
-    x = np.arange(1, 3001)
+    x = np.arange(1,3000)
     for i in range(3):
-        sim = n_peaks_spectra(x,n=3,seed=i)
-        base = polynomial_baseline(x)
+        n=i+1
+        deg=i+2
+        sim = n_peaks_spectra(x,n=n,seed=i)
+        base = polynomial_baseline(x,degree=deg,seed=i)
         y = sim + base
-        plt.plot(y,label="Created")
-        plt.plot(base,label="baseline")
-        plt.plot(sim,label="sim")
+        plt.plot(y,label=f"{n}-peaks")
+        plt.plot(base,label=f"{deg}-degree-baseline")
+        plt.plot(sim,label="Synthetic")
         plt.legend()
         plt.show()

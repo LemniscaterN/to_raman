@@ -1,10 +1,20 @@
-
+"""
+    To correct baseline.
+    * arPLS
+    * purePLS
+    * rolling_ball
+"""
 
 from scipy import sparse
 from scipy.sparse import linalg
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
+from scipy.sparse import csc_matrix
+from scipy.sparse import spdiags
+import scipy.sparse.linalg as spla
+import pandas as pd
+from skimage.restoration import rolling_ball as rb
 
 #Paper about arPLS
 #https://pubs.rsc.org/en/content/articlehtml/2015/an/c4an01061b
@@ -37,7 +47,7 @@ def arPLS(
     """
     L = len(Data)
     if(guess_baseline_order is not None):
-        lam = _lambda_optimizer(L,guess_baseline_order)
+        lam = _lambda_optimizer_to_arPLS(L,guess_baseline_order)
 
     diag = np.ones(L - 2)
     D = sparse.spdiags([diag, -2*diag, diag], [0, -1, -2], L, L - 2)
@@ -56,7 +66,8 @@ def arPLS(
         s = np.std(dn)
 
         #2 * (d - (2*s - m))/s  > 1000,np.exp(tes)=inf
-        ex = np.exp(2 * (d - (2*s - m))/s)        
+        with np.errstate(all='ignore'):   
+            ex = np.exp(2 * (d - (2*s - m))/s) 
         w_new = 1 / (1 + ex)
     
         criteria = norm(w_new - w) / norm(w)
@@ -86,7 +97,7 @@ def arPLS(
 
 #Asymetrically reweighted penalized least squares[2019]
 #https://www.koreascience.or.kr/article/JAKO201913458198163.pdf
-def _lambda_optimizer(input_length,baseline_order_from_shape):
+def _lambda_optimizer_to_arPLS(input_length,baseline_order_from_shape):
     N = input_length
     t = baseline_order_from_shape
     lam = 10**(np.log2(N)-0.5*t-3.5)
@@ -98,3 +109,75 @@ if __name__ == "__main__":
     y = sample_spectra.n_peaks_spectra(x,n=3) + sample_spectra.polynomial_baseline(x,degree=3)
     corrected = arPLS(y,show_process=True,guess_baseline_order=3)
     #corrected = arPLS(y,show_process=True,lam=1e4)
+
+#Maybe this code is original.
+#https://stackoverflow.com/questions/29156532/python-baseline-correction-library
+def pureASL(
+        Data            :list,
+        lam             :int   =10**3.5,
+        p               :float =0.00005,
+        repeat_max      :int   =10,
+        show_process    :bool  =False
+    ):
+    """
+        Asymmetric Least Squares Smoothing(2005)
+        In practice, λ and p need to be optimized.
+        λ : 1e3-1e5 ?
+        p : 0.001-0.1
+    """ 
+    L = len(Data)
+    D = csc_matrix(np.diff(np.eye(L), 2))
+    w = np.ones(L)
+    plt.plot(Data,color="black",label="Targets")
+
+    y = 0
+    corrected = pd.DataFrame(index=range(len(Data)))
+    for i in range(repeat_max):
+        W = spdiags(w, 0, L, L)
+        Y = W + lam * D.dot(D.transpose())
+        y = spla.spsolve(Y, w*Data)
+        w = p * (Data > y) + (1-p) * (Data < y)
+        corrected.loc[:, i+1] = Data - y
+        plt.plot(y, "black", linewidth=1, linestyle="dashed",alpha=0.3)
+
+    if show_process:
+        plt.title(f"pureASL λ={lam:.2f},p={p}")
+        plt.plot(y, "black", linewidth=1, linestyle="dashed",label="Estimated Baseline")
+        plt.plot(corrected.loc[:, repeat_max],color="blue",label="Corrected")
+        plt.legend()
+        plt.show()
+    plt.clf()
+    plt.close()
+    return corrected.loc[:, repeat_max]
+
+
+def rolling_ball(Data, BC_Repeat_or_Radius, Show_Picture_of_pathway):
+    ramanshift_cut = [float(r.split("_")[1]) for r in Data.index]
+    
+    rb_data = rb(Data, radius=BC_Repeat_or_Radius)
+    
+    plt.figure(figsize=(15, 8))
+    
+    #TODO 目盛線を引くために追加したコード
+    plt.minorticks_on()
+    plt.grid(which = "both", axis="x", color = "gray", linestyle="--")
+    
+    plt.plot(ramanshift_cut, Data, linewidth=2)
+    plt.plot(ramanshift_cut, rb_data, "b", linewidth=1, linestyle="dashed")
+    
+    
+    if Show_Picture_of_pathway:
+        plt.show()
+    plt.close("all")
+
+    return Data - rb_data
+
+if __name__ == "__main__":
+    import sample_spectra
+    from sample_spectra import n_peaks_spectra,polynomial_baseline
+    x = np.arange(1, 1001)
+    y = sample_spectra.n_peaks_spectra(x,n=3) + sample_spectra.polynomial_baseline(x,degree=3)
+
+    corrected = arPLS(y,show_process=True,guess_baseline_order=3)
+    corrected = arPLS(y,show_process=True,lam=1e4) 
+    corrected = pureASL(y,show_process=True)
