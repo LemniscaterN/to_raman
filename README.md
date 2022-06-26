@@ -15,6 +15,7 @@
    - [ベースライン処理](#ベースライン処理)
    - [その他](#その他)
 - [利用方法](#利用方法)
+- [オススメのライブラリ](#オススメのライブラリ)
 - [Reference](#reference)
 
 
@@ -45,6 +46,15 @@ sample.pyをご覧ください．
 ```
 from raman_util.correct_baseline import arPLS
 ```
+
+# オススメのライブラリ
+* [pybaselines](https://pybaselines.readthedocs.io/en/latest/index.html)
+   
+   様々なベースライン補正(ASL,arPLS,IarPLSを含む)手法が利用できる．
+   生成した6つの模擬データへ9つのwhittaker系アルゴリズムを適用した結果である．(sample_pybaselines.py)
+   
+   生成した6つのデータに全てに対し，asPLSが最適だった(パラメータは全てデフォルト値)．
+   ![pybaselinesの複数の関数のテスト](./img/pybaselines.png)
 
 
 # Reference
