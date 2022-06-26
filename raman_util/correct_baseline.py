@@ -14,7 +14,7 @@ from scipy.sparse import csc_matrix
 from scipy.sparse import spdiags
 import scipy.sparse.linalg as spla
 import pandas as pd
-from skimage.restoration import rolling_ball as rb
+
 
 #Paper about arPLS
 #https://pubs.rsc.org/en/content/articlehtml/2015/an/c4an01061b
@@ -43,7 +43,7 @@ def arPLS(
 
         Return
         ----------
-        corrected
+        corrected,(estimate_baseline,info)
     """
     L = len(Data)
     if(guess_baseline_order is not None):
@@ -90,7 +90,7 @@ def arPLS(
     plt.close()
 
     if full_output:
-        info = {'num_iter': count, 'stop_criteria': criteria,'lambda:':lam}
+        info = {'num_iter': count, 'stop_criteria': criteria,'lambda':lam}
         return  d,estimate_baseline,info
     else:
         return d
@@ -153,6 +153,7 @@ def rolling_ball(
         Rolling_ball(kimage.restoration)
         In practice, radius need to be optimized.
     """ 
+    from skimage.restoration import rolling_ball as rb
     estimated_background = rb(Data, radius=radius)    
     if show_process:
         plt.plot(Data,color="black",label="Targets")
