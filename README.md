@@ -4,6 +4,7 @@ Python初学者でラマンスペクトルの前処理を勉強したい方向�
 
 トップページのURLは[こちら](https://lemniscatern.github.io/toraman/)
 
+なお，青色のリンクをクリックすると，htmlでコードと実行結果を閲覧できます．
 ## [Python環境構築編](https://lemniscatern.github.io/toraman/codes/html/Introduction.html)
 1. Anacondaを利用したPython環境構築
 2. 仮想環境の構築とcondaコマンドを利用したモジュールインストール
@@ -19,6 +20,5 @@ Python初学者でラマンスペクトルの前処理を勉強したい方向�
 # 利用方法
 画面内緑色の「Code」から「Download ZIP」でダウンロード可能です．
 
-https://lemniscatern.github.io/toraman/内のIntroduction.htmlを見て，Python環境を構築してください．
-以降は，codes直下の1_remove_background.jpynbから順に数字通りに読んでください．
-実行環境がない方や，何をしたいかが見たい人は[ここ](https://lemniscatern.github.io/toraman/)から自由に眺めてください．
+toraman/codes/html/ 内のIntroduction.html を見て，Python環境を構築してください．
+以降は，codes直下の1_remove_background.jpynbから順に数字通りに読んで実行してみてください．
