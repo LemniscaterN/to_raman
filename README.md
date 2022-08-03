@@ -1,14 +1,13 @@
 # What's this ?
 Python初学者でラマンスペクトルの前処理を勉強したい方向けのチュートリアルです．（機械学習は一切取り扱いません．）
-基本的に習うより慣れろスタイルです．ググれば大抵なんとかなります．
-
-トップページのURLは[こちら](https://lemniscatern.github.io/toraman/)
+基本的に習うより慣れろスタイルです．
 
 なお，青色のリンクをクリックすると，htmlでコードと実行結果を閲覧できます．
 ## [Python環境構築編](https://lemniscatern.github.io/toraman/codes/html/Introduction.html)
 1. Anacondaを利用したPython環境構築
-2. 仮想環境の構築とcondaコマンドを利用したモジュールインストール
-3. ascファイルからの読み込みと前処理
+2. 仮想環境の構築
+3. JupyterLabのインストールと起動
+4. .jpynbの実行，condaコマンドを利用したモジュールインストール
 
 ## 前処理編
 0. [模擬データの作成](https://lemniscatern.github.io/toraman/codes/html/0_create_simulated_spectra.html)(作成したデータは保存済み．興味のある人のみどうぞ．スキップ推奨)
