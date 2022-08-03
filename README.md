@@ -18,7 +18,7 @@ Python初学者でラマンスペクトルの前処理を勉強したい方向�
 4. [規格化](https://lemniscatern.github.io/toraman/codes/html/4_stamnd.html)
 
 # 利用方法
-画面内緑色の「Code」から「Download ZIP」でダウンロード可能です．
+[ここ](https://github.com/LemniscaterN/toraman)の，画面内緑色の「Code」から「Download ZIP」でダウンロード可能です．
 
 toraman/codes/html/ 内のIntroduction.html を見て，Python環境を構築してください．
 以降は，codes直下の1_remove_background.jpynbから順に数字通りに読んで実行してみてください．
